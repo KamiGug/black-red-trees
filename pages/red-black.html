@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/styles/basic.css" rel="stylesheet" />
+    <link href="/styles/light.css" id="changeStyle" rel="stylesheet" />
+    <link href="/styles/redblacktrees.css" rel="stylesheet" />
+    <title>Red Black Trees</title>
+  </head>
+  <body onload="startTrees()">
+    <header>
+      <ul>
+        <a href="/index.html">
+          <li><p>Home</p></li>
+        </a>
+        <li class="drop-down">
+          Algorithms
+          <ul>
+            <a href="/pages/red-black.html"><li>Red-Black Trees</li></a>
+          </ul>
+        </li>
+        <a href="#nieWiemKimJestem"><li>About me</li></a>
+      </ul>
+      <ul class="motive">
+        <li onclick="changeMotiveToDark()">dark</li>
+        <li onclick="changeMotiveToLight()">light</li>
+      </ul>
+    </header>
+    <div id="main">
+      <div id="left">
+        <ul>
+          <li>some text</li>
+          <li>separated</li>
+        </ul>
+      </div>
+      <div id="right">
+        <label for="input">Type in a number:</label>
+        <input type="number" id="givenumber" name="input" />
+        <button type="button" onclick="simplyAdd()">Add it!</button>
+        <button type="button" onclick="simplyRemove()">Remove it!</button>
+        <button type="button" onclick="simplyPush()">Push to console!</button>
+        <button type="button" onclick="drawTree()">Show me!</button>
+        <button type="button" onclick="killTree()">Remove all!</button>
+        
+        
+        <div id="fortree">
+        <!--  <span class="black node"><p>cunt</p></span>
+        </div>
+        <table>
+          <tr><th class="black node">2</th></tr>
+          <tr><th class="red node">1</th><th class="red node">3</th></tr>
+
+        </table>-->
+
+        </div>
+      </div>
+
+    </div>
+    <div id="nieWiemKimJestem"></div>
+  </body>
+  <footer>
+    <script src="/scripts/doathing.js"></script>
+    <script src="/scripts/redblacktrees.js"></script>
+  </footer>
+</html>

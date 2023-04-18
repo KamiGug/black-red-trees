@@ -1,0 +1,49 @@
+*{
+  color:black;
+  text-decoration: none;
+}
+header{
+  background-color: #936700;
+  border: rgb(0, 0, 0) solid 1px;
+}
+
+header ul li:first-child
+{
+  border: black solid 1px;
+}
+
+header ul li{
+    border-width: 1px 1px 1px 0px;
+    border-color: black;
+    border-style: solid;
+}
+
+header ul li:hover{
+  background-color: #6a4b01;
+}
+
+#right{
+  background-color: #f8efdb;
+  border-color: green;
+  border-style: double;
+}
+
+#left{
+  background-color: #ffe8b1;
+  border-color: red;
+  border-style: dotted;
+}
+
+#left ul li:first-child{
+  border: black solid 1px;
+}
+
+#left ul li{
+  border-width: 0 1px 1px;
+  border-color: black;
+  border-style: solid;
+}
+
+header .drop-down ul{
+  background-color: #936700;
+}

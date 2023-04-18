@@ -1,0 +1,73 @@
+.root{
+    --arrow-width: 0.1em;
+    --size-of-node: 3em;
+}
+
+.node{ 
+    display: inline-block;
+    width: 3em;    
+    height: 3em;
+    /* width: var(--size-of-node);    
+    height: var(--size-of-node); */
+    color:pink;
+    border: 1px solid white;
+    border-radius: 50%;
+    text-align: center;
+    position: absolute;
+    z-index: 2;
+}
+
+.node:hover{
+    z-index: 4;
+    /* width: 3.5em;    
+    height: 3.5em; */
+
+}
+
+.node > p{
+    display: inline-block;
+    vertical-align: -70%; 
+    /* ^^ only works for 3em for some freason */
+    color:white;
+    z-index: 3;
+}
+
+/* .node:hover > p{
+    vertical-align: -96%; 
+     /* only works for 3.5em for some freason 
+} */
+
+
+.red{
+    background-color: red;
+}
+
+.black{
+    background-color: black;
+}
+
+.none{
+    visibility: hidden;
+}
+
+.line-box{
+    display: inline-block;
+    position: absolute;
+    background-color: red;
+}
+
+.l-left{
+    background: linear-gradient(to bottom right, white 0%, white calc(50% - 0.1em), black calc(50% - 0.1em), black calc(50% + 0.1em), white calc(50% + 0.1em), white 100%);
+}
+
+.l-right{
+    background: linear-gradient(to bottom left, white 0%, white calc(50% - 0.1em), black calc(50% - 0.1em), black calc(50% + 0.1em), white calc(50% + 0.1em), white 100%);
+}
+
+#fortree{
+    overflow-x: scroll;
+    overflow-y: visible;
+    height: fit-content;
+    position: relative;
+    z-index: 1;
+}
