@@ -734,90 +734,90 @@ function startTrees() { //add listners, read motive
     
 
 
-    let key = 1;
+//     let key = 1;
 
-    switch (key) {
-        case 1:
-            Node.addNode(new Node(100));
-            Node.addNode(new Node(50));
-            Node.addNode(new Node(20));
-            Node.addNode(new Node(70));
-            Node.addNode(new Node(150));
-            Node.addNode(new Node(120));
-            Node.addNode(new Node(170));
-            Node.addNode(new Node(10));
-            Node.addNode(new Node(30));
-            //Node.addNode(new Node(70));
-            Node.addNode(new Node(60));
-            Node.addNode(new Node(90));
-            Node.addNode(new Node(80));
-            Node.addNode(new Node(110));
-            Node.addNode(new Node(130));
-            Node.addNode(new Node(160));
-            Node.addNode(new Node(190));
-            Node.addNode(new Node(180));
-            Node.addNode(new Node(200));
-            Node.addNode(new Node(210));
-            Node.addNode(new Node(195));
-            Node.addNode(new Node(197));
-            Node.addNode(new Node(193));
+//     switch (key) {
+//         case 1:
+//             Node.addNode(new Node(100));
+//             Node.addNode(new Node(50));
+//             Node.addNode(new Node(20));
+//             Node.addNode(new Node(70));
+//             Node.addNode(new Node(150));
+//             Node.addNode(new Node(120));
+//             Node.addNode(new Node(170));
+//             Node.addNode(new Node(10));
+//             Node.addNode(new Node(30));
+//             //Node.addNode(new Node(70));
+//             Node.addNode(new Node(60));
+//             Node.addNode(new Node(90));
+//             Node.addNode(new Node(80));
+//             Node.addNode(new Node(110));
+//             Node.addNode(new Node(130));
+//             Node.addNode(new Node(160));
+//             Node.addNode(new Node(190));
+//             Node.addNode(new Node(180));
+//             Node.addNode(new Node(200));
+//             Node.addNode(new Node(210));
+//             Node.addNode(new Node(195));
+//             Node.addNode(new Node(197));
+//             Node.addNode(new Node(193));
             
-            // Node.removeNode(10);
-            // Node.removeNode(30);
+//             // Node.removeNode(10);
+//             // Node.removeNode(30);
 
             
-            // Node.removeNode(150);
-            // Node.removeNode(160);
-            // Node.removeNode(170);
-            // Node.removeNode(180);
-            // Node.removeNode(190);
-            // Node.removeNode(193);
-            // Node.removeNode(195);
-            // Node.removeNode(197);
-            // Node.removeNode(200);
-            // Node.removeNode(100);
-            // Node.removeNode(110);
-            // Node.removeNode(120);
-            // Node.removeNode(90);
-            // Node.removeNode(80);
+//             // Node.removeNode(150);
+//             // Node.removeNode(160);
+//             // Node.removeNode(170);
+//             // Node.removeNode(180);
+//             // Node.removeNode(190);
+//             // Node.removeNode(193);
+//             // Node.removeNode(195);
+//             // Node.removeNode(197);
+//             // Node.removeNode(200);
+//             // Node.removeNode(100);
+//             // Node.removeNode(110);
+//             // Node.removeNode(120);
+//             // Node.removeNode(90);
+//             // Node.removeNode(80);
 
 
-            // Node.removeNode(130);
+//             // Node.removeNode(130);
             
 
-            break;
+//             break;
 
 
 
-        case 2:
-            Node.addNode(new Node(5));
-            Node.addNode(new Node(3));
-            Node.addNode(new Node(7));
-            Node.addNode(new Node(2));
-            Node.addNode(new Node(4));
-            Node.addNode(new Node(9));
-            break;
+//         case 2:
+//             Node.addNode(new Node(5));
+//             Node.addNode(new Node(3));
+//             Node.addNode(new Node(7));
+//             Node.addNode(new Node(2));
+//             Node.addNode(new Node(4));
+//             Node.addNode(new Node(9));
+//             break;
 
-        case 3:
-                setInterval(() => { Node.addNode(new Node(Math.floor(Math.random() * 10000)));
-                drawTree(); }, 800);
-                break;
+//         case 3:
+//                 setInterval(() => { Node.addNode(new Node(Math.floor(Math.random() * 10000)));
+//                 drawTree(); }, 800);
+//                 break;
 
-        case 4:
-                for (let i = 0; i < 64; i++) {
-                    Node.addNode(new Node(i*10));                    
-                }
-                break;
+//         case 4:
+//                 for (let i = 0; i < 64; i++) {
+//                     Node.addNode(new Node(i*10));                    
+//                 }
+//                 break;
 
-        case 5:
-            Node.addNode(new Node(70));
-            Node.addNode(new Node(50));
-            Node.addNode(new Node(90));
-            Node.addNode(new Node(60));
-            Node.addNode(new Node(20));
-            Node.addNode(new Node(80));
-            Node.addNode(new Node(210));
-    }
+//         case 5:
+//             Node.addNode(new Node(70));
+//             Node.addNode(new Node(50));
+//             Node.addNode(new Node(90));
+//             Node.addNode(new Node(60));
+//             Node.addNode(new Node(20));
+//             Node.addNode(new Node(80));
+//             Node.addNode(new Node(210));
+//     }
 
     drawTree();
 }
