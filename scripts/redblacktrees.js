@@ -10,12 +10,14 @@ class Node
         this.right = right;
         this.previous = previous;
         this.isRed = isRed;
+        this.isHighlighted = false;
     }
     value;
     left;
     right;
     previous;
     isRed;
+    isHighlighted
     static root = null;
 
     clone() {
@@ -303,9 +305,6 @@ class Node
         }
     }
 
-
-    
-
     static addNode(newNode)
     {
         if(Node.root != null)
@@ -348,14 +347,24 @@ class Node
 
     deleteCaseBlackParentBlackSiblingBlackNephew(){
         this.getSibling().isRed = true;
-        this.previous.deleteCaseSearcher();
+        this.previous.deleteCaseBlackLeaf();
     }
 
     deleteCaseSiblingRed() {
-        this == this.previous.left ? this.previous.rotateToLeft() : this.previous.rotateToRight();
         this.previous.isRed = true;
-        sibling.isred = false;
-        this.deleteCaseSearcher();
+        this.getSibling().isRed = false;
+        this == this.previous.left ? this.previous.rotateToLeft() : this.previous.rotateToRight();
+
+        if (this.getDistantNephew()!=null && this.getDistantNephew().isRed == true) {
+            this.deleteCaseRedDistantNephew();
+        } else {
+            if (this.getCloseNephew()!=null && this.getCloseNephew().isRed == true) {
+                this.deleteCaseRedCloseNephew();
+            } else { 
+                this.deleteCaseRedParentBlackNephews()
+            }
+        }
+        // this.deleteCaseBlackLeaf();
     }
 
     deleteCaseRedParentBlackNephews() {
@@ -366,7 +375,7 @@ class Node
     deleteCaseRedDistantNephew() {
         let sibling = this.getSibling();
         let distantNephew = this.getDistantNephew();
-        sibling = sibling.previous.left ? this.previous.rotateToLeft() : this.previous.rotateToLeft();
+        this == this.previous.left ? this.previous.rotateToLeft() : this.previous.rotateToRight();
         sibling.isRed = this.previous.isRed;
         this.previous.isRed = false;
         distantNephew.isRed = false;
@@ -378,10 +387,8 @@ class Node
         this == this.previous.left ? sibling.rotateToRight() : sibling.rotateToLeft();
         sibling.isRed = true;
         sibling.previous.isRed = false;
-        deleteCaseRedDistantNephew();
+        this.deleteCaseRedDistantNephew();
     }
-
-    
 
     deleteCaseSingleChild() {
         if (this.left!=null) {
@@ -414,33 +421,30 @@ class Node
     }
 
 
-    // deleteCaseRootSingleChild() {
-    //     this.left == null ? Node.root = this.right : Node.root = this.left;
-    // }
-
-    // deleteCaseNotRootNoChildren() {
-    //     this == this.previous.left ? this.previous.left == null : this.previous.right = null;
-    // }
-
-    // deleteCaseNotRootOneChild() {
-    //     if (this == this.previous.left) {
-    //         if (this.left != null) {
-    //             this.left.isRed = false;
-    //             this.previous.left = this.left;
-    //         } else {
-    //             this.right.isRed = false;
-    //             this.previous.left = this.right;
-    //         }
-    //     } else {
-    //         if (this.left != null) {
-    //             this.left.isRed = false;
-    //             this.previous.right = this.left;
-    //         } else {
-    //             this.right.isRed = false;
-    //             this.previous.right = this.right;
-    //         }
-    //     }
-    // }
+    deleteCaseBlackLeaf() {
+        if (this.previous !=null) {
+            let sibling = this.getSibling();
+            let closeNephew = this.getCloseNephew();
+            let distantNephew = this.getDistantNephew();
+            if (sibling.isRed == false) { //sibling is black and cannot be null
+                if (distantNephew == null || distantNephew.isRed == false) {//distant nephew is black
+                    if (closeNephew == null || closeNephew.isRed == false) {//close nephew is black
+                        if (this.previous.isRed == false) { //parent is black
+                            this.deleteCaseBlackParentBlackSiblingBlackNephew();
+                        } else { //parent is red
+                            this.deleteCaseRedParentBlackNephews();
+                        }
+                    } else { //close nephew is red
+                        this.deleteCaseRedCloseNephew();
+                    }
+                } else { //distant nephew is red
+                    this.deleteCaseRedDistantNephew();
+                }
+            } else {//sibling is red -> nephews are black
+                this.deleteCaseSiblingRed()
+            }
+        } 
+    }
 
     deleteCaseTwoChilderen() {
         let tmpSearch = this.right;
@@ -448,63 +452,47 @@ class Node
         while (tmpSearch.left != null) {
             tmpSearch = tmpSearch.left;
         }
-        this.previous = tmpSearch.previous;
-        //TODO: delete line belowa
-        // console.log("tmpSearch.previous: " + JSON.parse(JSON.stringify(tmpSearch.previous)));
-        this.previous.left == tmpSearch ? this.previous.left = this : this.previous.right = this;
-        // this.previous.left = tmpSearch;
-        this.left = null; //tmpSearch.left == null
-        this.right = tmpSearch.right;
-        this.right != null ? this.right.previous = this : {};
-        
+        if (tmpSearch == this.right) {
+            this.previous = tmpSearch;
+            this.right = tmpSearch.right;
+            this.right != null ? this.right.previous = this : {};
+            tmpSearch.right = this
+        } else {
+            this.previous = tmpSearch.previous;
+            if (this.previous != null) { //??
+                this.previous.left == tmpSearch ? this.previous.left = this : this.previous.right = this;
+            }
+            this.right = tmpSearch.right;
+            this.right != null ? this.right.previous = this : {};
+            tmpSearch.right = tmpSwap.right;
+            tmpSearch.right.previous = tmpSearch;
+
+        }
         tmpSearch.previous = tmpSwap.previous;
-        if (tmpSearch.previous!=null) {
-            tmpSearch == tmpSearch.previous.left ? tmpSearch.previous.left = tmpSearch : tmpSearch.previous.right = tmpSearch;
+        if (tmpSearch.previous != null) {
+            //if 'this' was a left child it needs to be connected to left
+            tmpSearch.previous.left == this ?  tmpSearch.previous.left = tmpSearch : tmpSearch.previous.right = tmpSearch;
         } else {
             Node.root = tmpSearch;
         }
+        
         tmpSearch.left = tmpSwap.left;
-        tmpSearch.left != null ? tmpSearch.left.previous = this : {};
+        tmpSearch.left != null ? tmpSearch.left.previous = tmpSearch : {};
 
-        //tmpSearch.left.previous = tmpSearch;
-        if (tmpSwap.right!=tmpSearch) { 
-            tmpSearch.right = tmpSwap.right;
-            tmpSearch.right != null ? tmpSearch.right.previous = this : {};
-        } else {
-            tmpSearch.right = this;
-            this.previous = tmpSearch;
-        }
+        this.left = null;
+        this.isRed = tmpSearch.isRed;
+        tmpSearch.isRed = tmpSwap.isRed;
         this.deleteCaseSearcher();
     }
 
     deleteCaseSearcher() {
-        console.log("deleteCaseSearcher - begining - " );
-        console.log(Node.isItOk() ? "wszystko dobrze" : "tragedia się dzieje");
+        Node.printTree();
+        // console.log(Node.isItOk() ? "wszystko dobrze" : "tragedia się dzieje");
         if (this.previous!=null) { //removed element is not root
             if (this.left == null && this.right == null) { //no children
                 // if (this.previous!=null) { //removed element is not root
                     if (this.isRed==false) { //removed element is a black leaf
-
-                        let sibling = this.getSibling();
-                        let closeNephew = this.getCloseNephew();
-                        let distantNephew = this.getDistantNephew();
-                        if (sibling.isRed == false) { //sibling is black and cannot be null
-                            if (distantNephew == null || distantNephew.isRed == false) {//distant nephew is black
-                                if (closeNephew == null || closeNephew.isRed == false) {//close nephew is black
-                                    if (this.previous.isRed == false) { //parent is black
-                                        this.deleteCaseBlackParentBlackSiblingBlackNephew();
-                                    } else { //parent is red
-                                        this.deleteCaseRedParentBlackNephews();
-                                    }
-                                } else { //close nephew is red
-                                    this.deleteCaseRedCloseNephew();
-                                }
-                            } else { //distant nephew is red
-                                this.deleteCaseRedDistantNephew();
-                            }
-                        } else {//sibling is red -> nephews are black
-                            this.deleteCaseSiblingRed()
-                        }
+                        this.deleteCaseBlackLeaf();
                     } else { //element is red and has no children
                         //this.deleteCaseNotRootNoChildren();
                     }
@@ -531,23 +519,26 @@ class Node
                 }
             }
         }
-    }
+        if (this.previous!=null) {
+            this == this.previous.left ? this.previous.left = null : this.previous.right = null;    
+        }
         
-
+    }
 
     static removeNode(val) {
         if (Node.root!=null) {
-            if (Node.root.value == val) {
-                Node.root.deleteCaseSearcher();
-                console.log("po roocie");
-                console.log( Node.isItOk() ? "wszystko dobrze" : "tragedia się dzieje");
+            let tmp = Node.root;
+            if (tmp.value == val) {
+                tmp.deleteCaseSearcher();
+                // if (tmp!=null && tmp!=Node.root) {
+                    // tmp == tmp.previous.left ? tmp.previous.left = null : tmp.previous.right = null;
+                // }
             } else {
-                let tmp = Node.root;
+                
                 let shouldItEnd;
                 do {
                     if (val == tmp.value) { //found element to remove
                         tmp.deleteCaseSearcher(); //this method pushes to leaf
-                        tmp == tmp.previous.left ? tmp.previous.left = null : tmp.previous.right = null;
                         shouldItEnd = true;
                     } else {
                         if(val>tmp.value){ //values bigger then current go to the right
@@ -569,10 +560,51 @@ class Node
                 } while(!shouldItEnd)
             }
         }
-        console.log("removeNode - end - ");
-        console.log( Node.isItOk() ? "wszystko dobrze" : "tragedia się dzieje");
+   }
+
+    static getNodeByValue(value) {
+        if (Node.root!=null) {
+            if (Node.root.value == value) {
+                return Node.root;
+            } else {
+                let tmp = Node.root;
+                // let shouldItEnd;
+                do {
+                    if (value == tmp.value) { //found element to remove
+                        return tmp;
+                    } else {
+                        if(value>tmp.value){ //values bigger then current go to the right
+                            if(tmp.right != null) //if there is anything to the right and new Node has a greater value we continue going down the tree
+                            {
+                                tmp = tmp.right;
+                            } else {
+                                return null;
+                            }
+                        } else {   //values equal or smaller than current go to the left
+                            if(tmp.left != null) { //if there is anything to the left and new Node has a smaller or equal value we continue going down the tree
+                                tmp = tmp.left;
+                            } else {   //otherwise if the left side is empty we can add the new Node to it
+                                return null;
+                            }
+                        }
+                    }
+                } while(true);
+            }
+        }
     }
 
+    static highlightNode(value, highlightTime) {
+        let tmp = Node.getNodeByValue(value);
+        if (tmp!=null) {
+            tmp.isHighlighted = true;
+            // drawTree();
+            setTimeout(() => {
+                tmp.isHighlighted = false;
+                drawTree();
+            }, highlightTime);
+        }
+        drawTree();
+    }
 
 
     destroyNode() {
@@ -601,18 +633,17 @@ class Node
         return ;
     }
 
-
-
     static printTree(){ //print first element, then recurrently print it's children as a pair
         if (Node.root != null) {
             const parent = document.getElementById("fortree");
             parent.innerHTML = "";
             let treeHeight = Node.height();
-            parent.style.height = (treeHeight * 4 /* + (space between nodes on Y axis * tree height) */) + 1 + "em";
+            parent.style.height = (treeHeight * 4 /* + (space between nodes on Y axis * tree height) */) + 2 + "em";
             // let startingValueX = (2 * treeHeight - 1) * sizeOfNode/2;
-            parent.appendChild(makeAnElement("div", "node " + (Node.root.isRed ? "red" : "black"), "<p>"+Node.root.value+"</p>", (2 * treeHeight - 1) * sizeOfNode/2 + "em", "0"));
+            // let startingValueX = (2 * (treeHeight - 1)) * sizeOfNode;
+            parent.appendChild(makeAnElement("div", "node " + (Node.root.isHighlighted ? "highlight " : "")  + (Node.root.isRed ? "red" : "black"), "<p>"+Node.root.value+"</p>", 2 * (treeHeight - 1) * sizeOfNode + "em", "1em"));
             //this.printChildren(parent, (2 * treeHeight) * sizeOfNode, 0, 30, 0.5, 4);
-            Node.root.printChildren(parent, (2 * treeHeight - 1) * sizeOfNode/2, 0, (2 * treeHeight - 1) * sizeOfNode/2, 0.5, 4);
+            Node.root.printChildren(parent, 2 * (treeHeight - 1) * sizeOfNode, 1, 2 * (treeHeight - 1) * sizeOfNode, 0.5, 4);
         } else {
             document.getElementById("fortree").innerHTML = "";
         }
@@ -622,15 +653,15 @@ class Node
     printChildren(parentElement, prevOffsetX, prevOffsetY, offsetX, diminishX, offsetY){
         let newOffsetX = offsetX * diminishX;
         if (this.left!=null) {
-            parentElement.appendChild(makeAnElement("div", "node " + (this.left.isRed ? "red" : "black"), "<p>"+this.left.value+"</p>", "calc(" + prevOffsetX + "em - " + newOffsetX + "em)", prevOffsetY + offsetY + "em"));
+            parentElement.appendChild(makeAnElement("div", "node "  + (this.left.isHighlighted ? "highlight " : "") + (this.left.isRed ? "red" : "black"), "<p>"+this.left.value+"</p>", "calc(" + prevOffsetX + "em - " + newOffsetX + "em)", prevOffsetY + offsetY + "em"));
             //here print line
-            parentElement.appendChild(makeAnElement("div", "line-box l-left", "", (prevOffsetX - newOffsetX - roundnessOffsetOfNode) + "em"), (prevOffsetY - roundnessOffsetOfNode) + "em", (newOffsetX + roundnessOffsetOfNode * 2) + "em", (offsetY + roundnessOffsetOfNode * 2) + "em");
+            //parentElement.appendChild(makeAnElement("div", "line-box l-left", "", (prevOffsetX - newOffsetX - roundnessOffsetOfNode) + "em"), (prevOffsetY - roundnessOffsetOfNode) + "em", (newOffsetX + roundnessOffsetOfNode * 2) + "em", (offsetY + roundnessOffsetOfNode * 2) + "em");
             this.left.printChildren(parentElement, prevOffsetX - newOffsetX, prevOffsetY + offsetY, offsetX * diminishX, diminishX, offsetY);
         }
         if (this.right!=null) {
-            parentElement.appendChild(makeAnElement("div", "node " + (this.right.isRed ? "red" : "black"), "<p>"+this.right.value+"</p>", "calc(" + prevOffsetX + "em + " + newOffsetX + "em)", prevOffsetY + offsetY + "em"));
+            parentElement.appendChild(makeAnElement("div", "node " + (this.right.isHighlighted ? "highlight " : "") + (this.right.isRed ? "red" : "black"), "<p>"+this.right.value+"</p>", "calc(" + prevOffsetX + "em + " + newOffsetX + "em)", prevOffsetY + offsetY + "em"));
             //here print line
-
+            //
             this.right.printChildren(parentElement, prevOffsetX + newOffsetX, prevOffsetY + offsetY, offsetX * diminishX, diminishX, offsetY);
         }
     }
@@ -653,67 +684,56 @@ function makeAnElement(tag, classCSS, htmlInside, offsetLeft, offsetTop, width =
 
 function simplyAdd()
 {
-    //if (Number.isInteger(document.getElementById("givenumber").value)){
-        Node.addNode(new Node(parseInt(document.getElementById("givenumber").value)));
-    //}
+    let i = parseInt(document.getElementById("givenumber").value);
+    Number.isInteger(i) ? Node.addNode(new Node(i)) : console.log("input is not a Number");
     document.getElementById("givenumber").value = "";
     document.getElementById("givenumber").focus();
     drawTree();
-    //console.log(parseInt(document.getElementById("givenumber").value));
     return ;
 }
 
-// function isItFine() {
-//     if (Node.isItOk()) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
 
 function simplyRemove() {
-    let i = parseInt(document.getElementById("givenumber").value);
-    // console.log(i + isItFine() ? "wszystko dobrze" : "tragedia się dzieje");
-    Node.removeNode(i);
-    // console.log(isItFine() ? "wszystko dobrze" : "tragedia się dzieje");
-
-    
+    Node.removeNode(parseInt(document.getElementById("givenumber").value));
     document.getElementById("givenumber").value = "";
     document.getElementById("givenumber").focus();
     drawTree();
-    //console.log(parseInt(document.getElementById("givenumber").value));
     return ;
 }
 
-function simplyPush() {
-    if(Node!= null) {
-        Node.root.pushToConsole();
-    } else {
-        console.log("bruh..")
-    }
-    return ;
-}
+// function simplyPush() {
+//     if(Node!= null) {
+//         Node.root.pushToConsole();
+//     } else {
+//         console.log("bruh..")
+//     }
+//     return ;
+// }
 
 function drawTree() {
-    Node.printTree()
-    /*
-    const grid = document.getElementById("fortree");
-    Node.root.setHeight(Node.root.checkHeight());
-    for (let i = 0; i < Node.getHeight(); i++) {
-        for (let i = 0; i<Node.getHeight(); i++) {
+   Node.printTree();
+}
 
-        }
-    }*/
+function highlightElement() {
+    Node.highlightNode(parseInt(document.getElementById("givenumber").value), 10*1000);
+    document.getElementById("givenumber").focus();
+    drawTree();
 }
 
 function killTree() {
-//     Node.destroyTree();
-//     document.getElementById("fortree").innerHTML = "";
-    console.log(Node.isItOk() ? "wszystko dobrze" : "tragedia się dzieje");
+    Node.destroyTree();
+    drawTree();
 
 }
 
 function startTrees() { //add listners, read motive
+    document.getElementById("add-btn").addEventListener("click", simplyAdd);
+    document.getElementById("rem-btn").addEventListener("click", simplyRemove);
+    document.getElementById("hig-btn").addEventListener("click", highlightElement);
+    document.getElementById("kil-btn").addEventListener("click", killTree);
+    
+
+
     let key = 1;
 
     switch (key) {
@@ -741,9 +761,33 @@ function startTrees() { //add listners, read motive
             Node.addNode(new Node(195));
             Node.addNode(new Node(197));
             Node.addNode(new Node(193));
-            Node.removeNode(30);
-            Node.removeNode(20);
+            
+            // Node.removeNode(10);
+            // Node.removeNode(30);
+
+            
+            // Node.removeNode(150);
+            // Node.removeNode(160);
+            // Node.removeNode(170);
+            // Node.removeNode(180);
+            // Node.removeNode(190);
+            // Node.removeNode(193);
+            // Node.removeNode(195);
+            // Node.removeNode(197);
+            // Node.removeNode(200);
+            // Node.removeNode(100);
+            // Node.removeNode(110);
+            // Node.removeNode(120);
+            // Node.removeNode(90);
+            // Node.removeNode(80);
+
+
+            // Node.removeNode(130);
+            
+
             break;
+
+
 
         case 2:
             Node.addNode(new Node(5));
@@ -763,6 +807,16 @@ function startTrees() { //add listners, read motive
                 for (let i = 0; i < 64; i++) {
                     Node.addNode(new Node(i*10));                    
                 }
+                break;
+
+        case 5:
+            Node.addNode(new Node(70));
+            Node.addNode(new Node(50));
+            Node.addNode(new Node(90));
+            Node.addNode(new Node(60));
+            Node.addNode(new Node(20));
+            Node.addNode(new Node(80));
+            Node.addNode(new Node(210));
     }
 
     drawTree();
